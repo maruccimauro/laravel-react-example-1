@@ -13,6 +13,9 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        User::factory()->count(20)->create(['role' => 'teacher']);
+        User::factory()->count(800)->create(['role' => 'student']);
+
         User::factory()->create([
             "name" => "teacher",
             "role" => "teacher",
@@ -24,7 +27,5 @@ class UserSeeder extends Seeder
             "role" => "student",
             "email" => "student@gmail.com",
         ]);
-        User::factory()->count(20)->create(['role' => 'teacher']);
-        User::factory()->count(800)->create(['role' => 'student']);
     }
 }
