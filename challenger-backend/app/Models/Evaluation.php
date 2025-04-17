@@ -9,6 +9,12 @@ class Evaluation extends Model
 {
     use HasFactory;
     //
+    protected $fillable = [
+        'student_id',
+        'teacher_id',
+        'score',
+        'specific_date'
+    ];
 
     public function teacher()
     {
