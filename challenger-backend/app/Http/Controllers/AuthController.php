@@ -19,9 +19,10 @@ class AuthController extends Controller
         // validate data
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|min:3|max:50',
+            'role' => 'required|in:student,teacher',
             'email' => 'required|email|min:10|max:255|unique:users,email',
-            'password' => 'required|string|min:8|max:30|confirmed',
-            'role' => 'required|in:student,teacher'
+            'password' => 'required|string|min:8|max:30|confirmed'
+
         ]);
 
         if ($validator->fails()) {
@@ -31,9 +32,9 @@ class AuthController extends Controller
         // create user
         User::create([
             'name' => $request->name,
+            'role' => $request->role,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role,
         ]);
 
         return response()->json(['message' => "New user created successfully"], 201);
@@ -70,7 +71,7 @@ class AuthController extends Controller
         return response()->json(['user' => $user], 200);
     }
 
-    public function loguot()
+    public function logout()
     {
         try {
             JWTAuth::invalidate(JWTAuth::getToken());
