@@ -1,7 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Middleware\isUserAuth;
+use App\Http\Controllers\EvaluationController;
+use App\Http\Middleware\IsUserAuth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -9,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post("/login", [AuthController::class, 'login']);
 Route::post("/register", [AuthController::class, 'register']);
-Route::middleware(isUserAuth::class)->group(function () {
+Route::middleware(IsUserAuth::class)->group(function () {
     Route::post("/logout", [AuthController::class, 'logout']);
     Route::post("/getuser", [AuthController::class, 'getUser']);
 });
