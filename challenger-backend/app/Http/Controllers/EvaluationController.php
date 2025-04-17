@@ -30,4 +30,70 @@ class EvaluationController extends Controller
 
         return response()->json($data, 200);
     }
+
+
+
+    public function store(Request $request)
+    {
+
+        // we manage the date
+        try {
+            $parsedDate = Carbon::parse($request->input('specific_date'));
+            $formattedDate = $parsedDate->format('Y/m/d');
+            $request->merge(['specific_date' => $formattedDate]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Invalid date format.',
+                'errors' => ['specific_date' => ['The date format is invalid.']]
+            ], 422);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'student_id' => 'required|numeric|exists:users,id',
+            'teacher_id' => 'required|numeric|exists:users,id',
+            'score' => 'required|numeric|min:1|max:10',
+            'specific_date' => 'required|date'
+        ]);
+
+        //was there an error in the validation?
+        if ($validator->fails()) {
+            return response()->json(
+                [
+                    'message' => 'Data validator error.',
+                    'errors' => $validator->errors()
+                ],
+                422
+            );
+        }
+
+        // is it a valid teacher id?
+        $teacher = User::find($request->teacher_id);
+        if ($teacher->role !== 'teacher') {
+            return response()->json([
+                'message' => 'Only teachers can upload a score'
+            ], 403);
+        }
+
+        //Is the id the same teacher?
+        $currentUser = Auth::user();
+        if ($currentUser->id !== (int) $request->teacher_id) {
+            return response()->json(['message' => 'You are not authorized to upload a score for another teacher.',], 403);
+        }
+
+        // the score is for one student?
+        $student = User::find($request->student_id);
+        if ($student->role !== 'student') {
+            return response()->json(['message' => 'You shoul dont give a rating to a teacher, only to students.'], 403);
+        }
+
+        // we create the record
+        Evaluation::create([
+            'student_id' => $request->student_id,
+            'teacher_id' => $request->teacher_id,
+            'score' => $request->score,
+            'specific_date' => Carbon::createFromFormat('Y/m/d', $request->specific_date)->format('Y-m-d')
+        ]);
+
+        return response()->json(['message' => 'Evaluation score created successfully'], 201);
+    }
 }

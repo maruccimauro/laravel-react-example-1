@@ -19,6 +19,7 @@ Route::middleware(IsUserAuth::class)->group(function () {
     Route::middleware(IsTeacher::class)->group(function () {
         Route::controller(EvaluationController::class)->group(function () {
             Route::get('/evaluations/index', 'index');
+            Route::post('/evaluations/store', 'store');
         });
     });
 });
