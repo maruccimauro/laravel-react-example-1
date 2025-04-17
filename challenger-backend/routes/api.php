@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EvaluationController;
+use App\Http\Middleware\IsTeacher;
 use App\Http\Middleware\IsUserAuth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -13,4 +14,11 @@ Route::post("/register", [AuthController::class, 'register']);
 Route::middleware(IsUserAuth::class)->group(function () {
     Route::post("/logout", [AuthController::class, 'logout']);
     Route::post("/getuser", [AuthController::class, 'getUser']);
+
+
+    Route::middleware(IsTeacher::class)->group(function () {
+        Route::controller(EvaluationController::class)->group(function () {
+            Route::get('/evaluations/index', 'index');
+        });
+    });
 });
