@@ -150,18 +150,20 @@ class EvaluationController extends Controller
 
 
         // is it a valid teacher id?
-        $teacher = User::find($evaluation->teacher_id);
+        $teacher = User::find($request->teacher_id);
         if ($teacher->role !== 'teacher') {
             return response()->json([
-                'message' => 'Only teachers can upload a score'
+                'message' => 'Only the teacher ID can be associated with the creation of a score.'
             ], 403);
         }
 
         //Is the id the same teacher?
         $currentUser = Auth::user();
-        if ($currentUser->id !== (int) $evaluation->teacher_id) {
+        if ($currentUser->id !== (int) $request->teacher_id) {
             return response()->json(['message' => 'You are not authorized to upload a score for another teacher.',], 403);
         }
+
+        return $currentUser->id . "/" . $evaluation->teacher_id;
 
         $evaluation->update([
             'student_id' => $request->student_id,
