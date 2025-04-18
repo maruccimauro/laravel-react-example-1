@@ -96,4 +96,15 @@ class EvaluationController extends Controller
 
         return response()->json(['message' => 'Evaluation score created successfully'], 201);
     }
+
+    public function show($evaluation)
+    {
+        $evaluation = Evaluation::where('id', $evaluation)->with(['student', 'teacher'])->first();
+
+        if (!$evaluation) {
+            return response()->json(['message' => 'Evaluation not found.'], 404);
+        }
+
+        return response()->json($evaluation, 200);
+    }
 }

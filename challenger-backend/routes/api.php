@@ -16,6 +16,11 @@ Route::middleware(IsUserAuth::class)->group(function () {
     Route::post("/auth/getuser", [AuthController::class, 'getUser']);
 
 
+
+    Route::controller(EvaluationController::class)->group(function () {
+        Route::get('/evaluations/{id}', 'show');
+    });
+
     Route::middleware(IsTeacher::class)->group(function () {
         Route::controller(EvaluationController::class)->group(function () {
             Route::get('/evaluations/index', 'index');
