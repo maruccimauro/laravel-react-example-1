@@ -178,4 +178,22 @@ class EvaluationController extends Controller
             'evaluation' => $evaluation
         ], 200);
     }
+
+
+    public function destroy($evaluation)
+    {
+        $evaluation = Evaluation::find($evaluation);
+
+        if (!$evaluation) {
+            return response()->json(['message' => 'Evaluation not found.'], 404);
+        }
+
+        $currentUser = Auth::user();
+        if ($currentUser->id !== (int) $evaluation->teacher_id) {
+            return response()->json(['message' => 'You are not authorized to delete a score for another teacher.',], 403);
+        }
+
+        $evaluation->delete();
+        return response()->json(["message" => 'Evaluation has been deleted successfully'], 200);
+    }
 }
