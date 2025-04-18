@@ -25,6 +25,7 @@ Route::middleware(IsUserAuth::class)->group(function () {
         Route::controller(EvaluationController::class)->group(function () {
             Route::get('/evaluations/index', 'index');
             Route::post('/evaluations/store', 'store');
+            Route::put('/evaluations/{id}', 'update');
         });
     });
 });

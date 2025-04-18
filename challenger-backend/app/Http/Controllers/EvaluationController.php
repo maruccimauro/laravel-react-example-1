@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 
 class EvaluationController extends Controller
 {
+
     //
     public function index()
     {
@@ -106,5 +107,73 @@ class EvaluationController extends Controller
         }
 
         return response()->json($evaluation, 200);
+    }
+
+    public function update(Request $request, $evaluation)
+    {
+        $evaluation = Evaluation::find($evaluation);
+
+        if (!$evaluation) {
+            return response()->json(['message' => 'Evaluation not found'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'student_id' => 'required|numeric|exists:users,id',
+            'teacher_id' => 'required|numeric|exists:users,id',
+            'score' => 'required|numeric|min:1|max:10',
+            'specific_date' => 'required|date'
+        ]);
+
+        //was there an error in the validation?
+        if ($validator->fails()) {
+            return response()->json(
+                [
+                    'message' => 'Data validator error.',
+                    'errors' => $validator->errors()
+                ],
+                422
+            );
+        }
+
+
+        // we manage the date
+        try {
+            $parsedDate = Carbon::parse($request->input('specific_date'));
+            $formattedDate = $parsedDate->format('Y/m/d');
+            $request->merge(['specific_date' => $formattedDate]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Invalid date format.',
+                'errors' => ['specific_date' => ['The date format is invalid.']]
+            ], 422);
+        }
+
+
+        // is it a valid teacher id?
+        $teacher = User::find($evaluation->teacher_id);
+        if ($teacher->role !== 'teacher') {
+            return response()->json([
+                'message' => 'Only teachers can upload a score'
+            ], 403);
+        }
+
+        //Is the id the same teacher?
+        $currentUser = Auth::user();
+        if ($currentUser->id !== (int) $evaluation->teacher_id) {
+            return response()->json(['message' => 'You are not authorized to upload a score for another teacher.',], 403);
+        }
+
+        $evaluation->update([
+            'student_id' => $request->student_id,
+            'teacher_id' => $request->teacher_id,
+            'score' => $request->score,
+            'specific_date' => Carbon::createFromFormat('Y/m/d', $request->specific_date)->format('Y-m-d')
+        ]);
+
+
+        return response()->json([
+            'message' => 'Evaluation updated successfully',
+            'evaluation' => $evaluation
+        ], 200);
     }
 }
