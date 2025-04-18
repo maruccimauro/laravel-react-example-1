@@ -18,15 +18,15 @@ Route::middleware(IsUserAuth::class)->group(function () {
 
 
     Route::controller(EvaluationController::class)->group(function () {
-        Route::get('/evaluations/{id}', 'show');
+        Route::get('/evaluations/{evaluation}', 'show');
     });
 
     Route::middleware(IsTeacher::class)->group(function () {
         Route::controller(EvaluationController::class)->group(function () {
-            Route::get('/evaluations/index', 'index');
-            Route::post('/evaluations/store', 'store');
-            Route::put('/evaluations/{id}', 'update');
-            Route::delete('/evaluations/{id}', 'destroy');
+            Route::get('/evaluations', 'index');
+            Route::post('/evaluations', 'store');
+            Route::put('/evaluations/{evaluation}', 'update');
+            Route::delete('/evaluations/{evaluation}', 'destroy');
         });
     });
 });
