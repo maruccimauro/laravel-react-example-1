@@ -163,7 +163,6 @@ class EvaluationController extends Controller
             return response()->json(['message' => 'You are not authorized to upload a score for another teacher.',], 403);
         }
 
-        return $currentUser->id . "/" . $evaluation->teacher_id;
 
         $evaluation->update([
             'student_id' => $request->student_id,
