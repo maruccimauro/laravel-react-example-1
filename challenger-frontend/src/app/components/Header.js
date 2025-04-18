@@ -7,8 +7,8 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 
 export default function Header() {
     return (
-        <Container fluid>
-            <Navbar expand="lg" id="header" className="bg-body-tertiary">
+        <Container id="header" fluid>
+            <Navbar expand="lg" className="">
                 <Container>
                     <Navbar.Brand>Challenger</Navbar.Brand>
                     <Navbar.Toggle
@@ -18,9 +18,15 @@ export default function Header() {
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
                             <Nav.Link className="header-link" href="#home">
+                                <span class="material-symbols-outlined">
+                                    account_circle
+                                </span>
                                 login
                             </Nav.Link>
                             <Nav.Link className="header-link" href="#home">
+                                <span class="material-symbols-outlined">
+                                    account_circle_off
+                                </span>
                                 logout
                             </Nav.Link>
                             {/* <Nav.Link href="#link">Link</Nav.Link>
